@@ -1,32 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Mini Militia Web</title>
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>DOODLE STRIKER</title>
 
     <style>
-        html, body {
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: #111;
+            background: #080808;
+            font-family: Arial, sans-serif;
+            touch-action: none;
+        }
+
+        #game {
+            width: 100%;
+            height: 100%;
         }
 
         canvas {
             display: block;
             margin: auto;
         }
+
+        #menu {
+            position: absolute;
+            inset: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    #252525,
+                    #080808
+                );
+
+            color: white;
+
+            z-index: 20;
+        }
+
+        .panel {
+            width: min(420px, 90vw);
+
+            padding: 30px;
+
+            background: #151515;
+
+            border: 1px solid #444;
+
+            border-radius: 16px;
+
+            text-align: center;
+
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            margin-top: 0;
+
+            font-size: 42px;
+
+            letter-spacing: 3px;
+        }
+
+        input {
+
+            width: 100%;
+
+            padding: 14px;
+
+            margin-bottom: 12px;
+
+            background: #222;
+
+            border: 1px solid #555;
+
+            border-radius: 8px;
+
+            color: white;
+
+            font-size: 18px;
+
+            text-align: center;
+        }
+
+        button {
+
+            width: 100%;
+
+            padding: 14px;
+
+            margin-top: 8px;
+
+            border: 0;
+
+            border-radius: 8px;
+
+            background: #00aaff;
+
+            color: white;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #008dcc;
+        }
+
+        #roomCode {
+
+            margin-top: 20px;
+
+            padding: 15px;
+
+            background: #222;
+
+            border-radius: 8px;
+
+            font-size: 25px;
+
+            letter-spacing: 5px;
+        }
+
+        #status {
+
+            margin-top: 15px;
+
+            color: #aaa;
+
+            min-height: 22px;
+        }
+
+        #lobbyPlayers {
+
+            margin-top: 15px;
+
+            color: #ddd;
+
+            line-height: 1.7;
+        }
+
+        #mobileControls {
+
+            position: absolute;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            z-index: 10;
+
+            display: none;
+        }
+
+        .mobileButton {
+
+            position: absolute;
+
+            width: 70px;
+
+            height: 70px;
+
+            border-radius: 50%;
+
+            border: 2px solid rgba(255,255,255,0.4);
+
+            background: rgba(255,255,255,0.15);
+
+            color: white;
+
+            font-size: 22px;
+
+            pointer-events: auto;
+
+            user-select: none;
+        }
+
+        #leftButton {
+            bottom: 35px;
+            left: 25px;
+        }
+
+        #rightButton {
+            bottom: 35px;
+            left: 110px;
+        }
+
+        #jumpButton {
+            bottom: 35px;
+            right: 110px;
+        }
+
+        #fireButton {
+            bottom: 35px;
+            right: 25px;
+        }
+
+        @media (pointer: coarse) {
+
+            #mobileControls {
+                display: block;
+            }
+
+        }
+
     </style>
+
 </head>
 
 <body>
 
-    <script src="./node_modules/phaser/dist/phaser.js"></script>
-    <script src="./game.js"></script>
+    <div id="menu">
+
+        <div class="panel">
+
+            <h1>DOODLE STRIKER</h1>
+
+            <p>
+                Real-time multiplayer arena shooter
+            </p>
+
+            <button id="createButton">
+                CREATE ROOM
+            </button>
+
+            <hr>
+
+            <input
+                id="roomInput"
+                placeholder="ROOM CODE"
+                maxlength="5"
+            >
+
+            <button id="joinButton">
+                JOIN ROOM
+            </button>
+
+            <div id="roomCode"></div>
+
+            <div id="lobbyPlayers"></div>
+
+            <button
+                id="startButton"
+                style="display:none;"
+            >
+                START GAME
+            </button>
+
+            <div id="status"></div>
+
+        </div>
+
+    </div>
+
+    <div id="game"></div>
+
+    <div id="mobileControls">
+
+        <button
+            class="mobileButton"
+            id="leftButton"
+        >
+            ←
+        </button>
+
+        <button
+            class="mobileButton"
+            id="rightButton"
+        >
+            →
+        </button>
+
+        <button
+            class="mobileButton"
+            id="jumpButton"
+        >
+            ↑
+        </button>
+
+        <button
+            class="mobileButton"
+            id="fireButton"
+        >
+            🔫
+        </button>
+
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script src="/node_modules/phaser/dist/phaser.js"></script>
+
+    <script src="/game.js"></script>
 
 </body>
+
 </html>

@@ -1,16 +1,15 @@
 {
-  "name": "minimilitiaweb",
+  "name": "doodle-striker",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A browser-based real-time multiplayer 2D action shooter for 2-6 players.",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "phaser": "^4.2.1"
+    "express": "^5.1.0",
+    "phaser": "^3.90.0",
+    "socket.io": "^4.8.1"
   }
 }
