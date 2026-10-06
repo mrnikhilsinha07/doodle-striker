@@ -364,6 +364,11 @@ io.on("connection", (socket) => {
 
     console.log("Player connected:", socket.id);
 
+    // Echo the browser timestamp for real-time round-trip ping measurement.
+    socket.on("pingCheck", (sentAt) => {
+        socket.emit("pingCheck", sentAt);
+    });
+
     socket.on("createRoom", (callback) => {
 
         const code = randomRoomCode();

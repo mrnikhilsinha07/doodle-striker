@@ -1,4 +1,5 @@
 const socket = io();
+window.gameSocket = socket;
 
 let roomCode = null;
 let roomState = null;
@@ -167,6 +168,38 @@ socket.on(
     }
 );
 
+// Real-time Socket.IO round-trip ping, displayed from 0 to 999 ms.
+socket.on("pingCheck", (sentAt) => {
+    const latency = Math.max(
+        0,
+        Math.min(
+            999,
+            Date.now() - Number(sentAt)
+        )
+    );
+
+    const pingElement =
+        document.getElementById("pingValue");
+
+    if (pingElement) {
+        pingElement.textContent =
+            `${latency} ms`;
+    }
+});
+
+setInterval(() => {
+    if (socket.connected) {
+        socket.emit("pingCheck", Date.now());
+    } else {
+        const pingElement =
+            document.getElementById("pingValue");
+
+        if (pingElement) {
+            pingElement.textContent = "-- ms";
+        }
+    }
+}, 1000);
+
 socket.on(
     "roomState",
     (state) => {
@@ -196,14 +229,20 @@ socket.on(
             menu.style.display =
                 "flex";
 
+            const canStart =
+                state.host === socket.id &&
+                state.players.length >= 2;
+
             startButton.style.display =
-                state.host === socket.id
+                canStart
                     ? "block"
                     : "none";
 
             statusDisplay.textContent =
                 state.players.length >= 2
-                    ? "Ready to start."
+                    ? (state.host === socket.id
+                        ? "Ready to start."
+                        : "Waiting for the host to start the game.")
                     : "Waiting for another player...";
         }
 

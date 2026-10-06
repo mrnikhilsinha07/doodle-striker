@@ -1,324 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    >
-
-    <title>DOODLE STRIKER</title>
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #080808;
-            font-family: Arial, sans-serif;
-            touch-action: none;
-        }
-
-        #game {
-            width: 100%;
-            height: 100%;
-        }
-
-        canvas {
-            display: block;
-            margin: auto;
-        }
-
-        #menu {
-            position: absolute;
-            inset: 0;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background:
-                radial-gradient(
-                    circle at center,
-                    #252525,
-                    #080808
-                );
-
-            color: white;
-
-            z-index: 20;
-        }
-
-        .panel {
-            width: min(420px, 90vw);
-
-            padding: 30px;
-
-            background: #151515;
-
-            border: 1px solid #444;
-
-            border-radius: 16px;
-
-            text-align: center;
-
-            box-shadow:
-                0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-
-        h1 {
-            margin-top: 0;
-
-            font-size: 42px;
-
-            letter-spacing: 3px;
-        }
-
-        input {
-
-            width: 100%;
-
-            padding: 14px;
-
-            margin-bottom: 12px;
-
-            background: #222;
-
-            border: 1px solid #555;
-
-            border-radius: 8px;
-
-            color: white;
-
-            font-size: 18px;
-
-            text-align: center;
-        }
-
-        button {
-
-            width: 100%;
-
-            padding: 14px;
-
-            margin-top: 8px;
-
-            border: 0;
-
-            border-radius: 8px;
-
-            background: #00aaff;
-
-            color: white;
-
-            font-size: 17px;
-
-            font-weight: bold;
-
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #008dcc;
-        }
-
-        #roomCode {
-
-            margin-top: 20px;
-
-            padding: 15px;
-
-            background: #222;
-
-            border-radius: 8px;
-
-            font-size: 25px;
-
-            letter-spacing: 5px;
-        }
-
-        #status {
-
-            margin-top: 15px;
-
-            color: #aaa;
-
-            min-height: 22px;
-        }
-
-        #lobbyPlayers {
-
-            margin-top: 15px;
-
-            color: #ddd;
-
-            line-height: 1.7;
-        }
-
-        #mobileControls {
-
-            position: absolute;
-
-            inset: 0;
-
-            pointer-events: none;
-
-            z-index: 10;
-
-            display: none;
-        }
-
-        .mobileButton {
-
-            position: absolute;
-
-            width: 70px;
-
-            height: 70px;
-
-            border-radius: 50%;
-
-            border: 2px solid rgba(255,255,255,0.4);
-
-            background: rgba(255,255,255,0.15);
-
-            color: white;
-
-            font-size: 22px;
-
-            pointer-events: auto;
-
-            user-select: none;
-        }
-
-        #leftButton {
-            bottom: 35px;
-            left: 25px;
-        }
-
-        #rightButton {
-            bottom: 35px;
-            left: 110px;
-        }
-
-        #jumpButton {
-            bottom: 35px;
-            right: 110px;
-        }
-
-        #fireButton {
-            bottom: 35px;
-            right: 25px;
-        }
-
-        @media (pointer: coarse) {
-
-            #mobileControls {
-                display: block;
-            }
-
-        }
-
-    </style>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>DOODLE STRIKER</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080808;font-family:Arial,sans-serif;touch-action:none}
+#game{position:fixed;inset:0;width:100vw;height:100vh;z-index:1}
+#game canvas{display:block}
+#menu{position:fixed;inset:0;z-index:20;width:100vw;height:100vh;background:#101010 url("/menu-bg.png") center center/cover no-repeat;overflow:hidden}
+.menuShade{position:absolute;inset:0;background:rgba(0,0,0,.06);pointer-events:none}
+.topLeft{position:absolute;top:22px;left:24px;z-index:4}
+.ping{height:58px;min-width:205px;padding:0 18px;display:flex;align-items:center;gap:12px;background:linear-gradient(#1b241d,#090e0a);border:3px solid #3d4b36;clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px),0 8px);box-shadow:0 5px 0 #111,0 0 18px rgba(0,0,0,.45);color:#f1f1f1;font-weight:800;letter-spacing:1px;font-size:20px}
+.pingBars{font-size:25px;color:#32e64b;letter-spacing:-5px}
+.pingValue{color:#36ef4e}
+.topRight{position:absolute;right:24px;top:22px;display:flex;gap:12px;z-index:4}
+.iconBtn{width:58px;height:58px;border:3px solid #3d4b36;background:linear-gradient(#222a26,#090d0b);color:#ddd;font-size:28px;cursor:pointer;box-shadow:0 5px 0 #111;clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px),0 8px)}
+.iconBtn:hover{filter:brightness(1.25)}
+.centerMenu{position:absolute;left:50%;top:70%;transform:translate(-50%,-50%);width:min(430px,31vw);min-width:300px;display:flex;flex-direction:column;gap:12px;z-index:5}
+.menuBtn{height:78px;border:4px solid #111;clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px);font-size:24px;font-weight:900;letter-spacing:1px;cursor:pointer;box-shadow:0 7px 0 rgba(0,0,0,.7),inset 0 0 0 2px rgba(255,255,255,.2)}
+#createButton{background:linear-gradient(#72db31,#2a9d20);color:#fff}
+#joinButton{background:linear-gradient(#ffd63b,#e7a90b);color:#111}
+#startButton{display:none;background:linear-gradient(#ef8736,#bd4e17);color:#fff}
+.roomInput{height:66px;width:100%;border:4px solid #111;outline:none;background:linear-gradient(#111820,#080b0f);color:#fff;text-align:center;font-size:21px;font-weight:800;letter-spacing:5px;padding:0 16px;clip-path:polygon(12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px),0 12px);box-shadow:0 7px 0 rgba(0,0,0,.7)}
+.roomInput::placeholder{color:#9da1a8;letter-spacing:2px}
+.roomInfo,.status{position:absolute;right:24px;width:min(350px,22vw);min-width:260px;background:linear-gradient(145deg,rgba(18,29,21,.96),rgba(6,11,8,.96));border:4px solid #34472f;color:#ddd;padding:18px 22px;clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 14px,100% calc(100% - 14px),calc(100% - 14px) 100%,14px 100%,0 calc(100% - 14px),0 14px);box-shadow:0 8px 0 rgba(0,0,0,.65)}
+.roomInfo{top:61%;transform:translateY(-50%)}
+.status{top:82%;transform:translateY(-50%)}
+.panelTitle{font-size:22px;font-weight:900;letter-spacing:2px;border-bottom:2px solid #65705f;padding-bottom:8px;margin-bottom:13px}
+.roomCodeDisplay{height:55px;border:2px solid #4c554d;background:#0b0f0d;display:flex;align-items:center;justify-content:center;font-size:22px;letter-spacing:8px;font-weight:900;color:#888}
+.roomPlayers{margin-top:12px;font-size:19px}
+#visualStatus{font-size:17px;line-height:1.4;color:#ccc}
+#lobbyPlayers,#roomCode{display:none}
+#status{display:none!important}
+#mobileControls{position:fixed;inset:0;z-index:10;pointer-events:none;display:none}
+@media(max-width:900px){
+ .topLeft{top:12px;left:12px}.topRight{top:12px;right:12px}
+ .ping{min-width:165px;height:48px;font-size:15px}.iconBtn{width:48px;height:48px;font-size:22px}
+ .centerMenu{width:min(390px,70vw);top:70%}
+ .roomInfo,.status{display:none}
+}
+@media(pointer:coarse){#mobileControls{display:block}}
+</style>
 </head>
-
 <body>
 
-    <div id="menu">
+<div id="game"></div>
 
-        <div class="panel">
+<div id="menu">
+  <div class="menuShade"></div>
 
-            <h1>DOODLE STRIKER</h1>
-
-            <p>
-                Real-time multiplayer arena shooter
-            </p>
-
-            <button id="createButton">
-                CREATE ROOM
-            </button>
-
-            <hr>
-
-            <input
-                id="roomInput"
-                placeholder="ROOM CODE"
-                maxlength="5"
-            >
-
-            <button id="joinButton">
-                JOIN ROOM
-            </button>
-
-            <div id="roomCode"></div>
-
-            <div id="lobbyPlayers"></div>
-
-            <button
-                id="startButton"
-                style="display:none;"
-            >
-                START GAME
-            </button>
-
-            <div id="status"></div>
-
-        </div>
-
+  <div class="topLeft">
+    <div class="ping">
+      <span class="pingBars">▂▄▆█</span>
+      <span>PING: <span id="pingValue" class="pingValue">-- ms</span></span>
     </div>
+  </div>
 
-    <div id="game"></div>
+  <div class="topRight">
+    <button class="iconBtn" id="settingsButton" title="Settings">⚙</button>
+    <button class="iconBtn" id="fullscreenButton" title="Fullscreen">⛶</button>
+  </div>
 
-    <div id="mobileControls">
+  <div class="centerMenu">
+    <button id="createButton" class="menuBtn">👥 &nbsp; CREATE ROOM</button>
+    <input id="roomInput" class="roomInput" maxlength="5" placeholder="ENTER ROOM CODE" autocomplete="off">
+    <button id="joinButton" class="menuBtn">▶ &nbsp; JOIN ROOM</button>
+    <button id="startButton" class="menuBtn">START GAME</button>
+    <div id="roomCode"></div>
+    <div id="lobbyPlayers"></div>
+  </div>
 
-        <button
-            class="mobileButton"
-            id="leftButton"
-        >
-            ←
-        </button>
+  <div class="roomInfo">
+    <div class="panelTitle">ROOM INFO</div>
+    <div class="roomCodeDisplay" id="visualRoomCode">-----</div>
+    <div class="roomPlayers">👥 &nbsp; Players: <strong id="visualPlayers">0/6</strong></div>
+  </div>
 
-        <button
-            class="mobileButton"
-            id="rightButton"
-        >
-            →
-        </button>
+  <div class="status">
+    <div class="panelTitle">STATUS</div>
+    <div id="visualStatus">Create or join a room to start</div>
+  </div>
 
-        <button
-            class="mobileButton"
-            id="jumpButton"
-        >
-            ↑
-        </button>
+  <div id="status"></div>
+</div>
 
-        <button
-            class="mobileButton"
-            id="fireButton"
-        >
-            🔫
-        </button>
+<div id="mobileControls">
+  <button class="mobileButton" id="leftButton">←</button>
+  <button class="mobileButton" id="rightButton">→</button>
+  <button class="mobileButton" id="jumpButton">↑</button>
+  <button class="mobileButton" id="fireButton">🔫</button>
+</div>
 
-    </div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/node_modules/phaser/dist/phaser.js"></script>
+<script src="/game.js"></script>
+<script>
+const visualStatus=document.getElementById("visualStatus");
+const visualRoomCode=document.getElementById("visualRoomCode");
+const visualPlayers=document.getElementById("visualPlayers");
+const pingValue=document.getElementById("pingValue");
 
-    <script src="/socket.io/socket.io.js"></script>
+document.getElementById("fullscreenButton").addEventListener("click",async()=>{
+  try{
+    if(!document.fullscreenElement) await document.documentElement.requestFullscreen();
+    else await document.exitFullscreen();
+  }catch(e){console.warn("Fullscreen unavailable",e);}
+});
 
-    <script src="/node_modules/phaser/dist/phaser.js"></script>
+document.getElementById("settingsButton").addEventListener("click",()=>{
+  visualStatus.textContent="Settings will be added here later.";
+});
 
-    <script src="/game.js"></script>
+const legacyStatus=document.getElementById("status");
+const observer=new MutationObserver(()=>{
+  if(legacyStatus.textContent) visualStatus.textContent=legacyStatus.textContent;
+});
+observer.observe(legacyStatus,{childList:true,subtree:true,characterData:true});
 
+if(window.gameSocket){
+  window.gameSocket.on("roomState",state=>{
+    visualRoomCode.textContent=state.code||"-----";
+    visualPlayers.textContent=`${state.players.length}/6`;
+
+    const startButton=document.getElementById("startButton");
+    const canStart =
+      state.state==="lobby" &&
+      state.host===window.gameSocket.id &&
+      state.players.length>=2;
+
+    if(startButton){
+      startButton.style.display=canStart ? "block" : "none";
+    }
+
+    if(state.state==="lobby"){
+      visualStatus.textContent =
+        state.players.length>=2
+          ? (state.host===window.gameSocket.id
+              ? "Ready to start."
+              : "Waiting for the host to start the game.")
+          : "Waiting for another player...";
+    }
+  });
+  window.gameSocket.on("connect",()=>{
+    pingValue.textContent="-- ms";
+  });
+}
+
+window.addEventListener("keydown",e=>{
+  if(e.key==="Enter" && document.activeElement===document.getElementById("roomInput")){
+    document.getElementById("joinButton").click();
+  }
+});
+</script>
 </body>
-
 </html>
